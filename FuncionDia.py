@@ -47,8 +47,11 @@ def get_peliculas(dia: str):
     if dia not in dias_map:
         raise HTTPException(status_code=400, detail="Día no válido. Por favor ingrese un día en español.")
 
+    # Obtener el día en inglés correspondiente
+    dia_en_ingles = dias_map[dia]
+
     # Filtrar el DataFrame para contar películas estrenadas ese día
-    cantidad = df[df['day_of_week'].str.lower() == dia].shape[0]  # Contar las filas donde el día coincide
+    cantidad = df[df['day_of_week'].str.lower() == dia_en_ingles.lower()].shape[0]  # Contar las filas donde el día coincide
 
     return {
         "dia": dia,
@@ -59,7 +62,9 @@ def get_peliculas(dia: str):
 @app.get("/peliculas/cantidad_por_dia")
 def get_cantidad_por_dia():
     resultados = {}
-    for dia in dias_map.keys():
-        cantidad = df[df['day_of_week'].str.lower() == dia].shape[0]
+    for dia, dia_en_ingles in dias_map.items():
+        cantidad = df[df['day_of_week'].str.lower() == dia_en_ingles.lower()].shape[0]
         resultados[dia] = cantidad
+    return resultados
+
     return resultados
